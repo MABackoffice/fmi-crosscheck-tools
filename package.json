@@ -1,0 +1,5 @@
+{
+    "private": true,
+    "name": "cross-check",
+    "workspaces": ["xc-scripts", "widgets", "data-types", "build-server"]
+}
