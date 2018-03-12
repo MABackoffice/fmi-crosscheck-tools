@@ -39,7 +39,7 @@ COPY build.sh init.sh gen.sh webhook.sh /home/builder/
 # Now create a data directory for all the vendor data
 RUN mkdir /home/builder/data /home/builder/data/vendors
 # Copy the files from this repository into the image so they are available there
-COPY .gitconfig s3.cfg clone.js update.js package.json yarn.lock vendors.json /home/builder/data/
+COPY .gitconfig s3.cfg clone.js update.js package.json vendors.json /home/builder/data/
 
 # Make directory for the site
 RUN mkdir /home/builder/data/site /home/builder/data/output
