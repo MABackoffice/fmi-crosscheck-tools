@@ -78,37 +78,8 @@ to the CDN (currently `netlify`) which has the effect of updating the website at
 
 ## Can I use the Docker image to run the build locally?
 
-Tt is also possible to use the Docker image to run the build process
-locally on your machine. The simplest way to do this is use the following
-`docker` command:
-
-```
-$ docker run -it modelica/fmi-build-server ./gen.sh
-```
-
-This will run the entire process from start to finish. You can observe the
-output to see if any issues occur during the build.
-
-A useful variation on this command is:
-
-```
-$ mkdir site
-$ docker run -v site:/usr/builder/data/site/_site -it modelica/fmi-build-server ./gen.sh
-```
-
-Running the build process locally your system may accumulate a number of
-containers and volumes that you have no use for. So it is a good idea to
-occasionally clean things up by running:
-
-```
-$ docker system prune
-```
-
-**NB** Be careful since, as the command tells you when it runs, it will clean up
-all stopped containers and dangling images. If you are doing other things with
-Docker be aware that this might lose other containers or images that you would
-otherwise wish to keep. But if you are only using Docker to do FMI builds, the
-command should be completely safe.
+> TODO: Fill this out, but figure out some way to utilize a local repo for the
+> vendor data.
 
 ## How the build server image is created?
 
@@ -139,7 +110,3 @@ The build server installs the latest published version of the
 `@modelica/fmi-xc-scripts` package (contained in the `xc-scripts` directory) to
 process the vendor data. The [`README`](./xc-scripts/READM.md) file contains
 details on how to use the scripts.
-
-## How can I use the Docker image to do a local build?
-
-TBA
