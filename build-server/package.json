@@ -1,0 +1,28 @@
+{
+    "name": "@modelica/crosscheck-update",
+    "version": "0.1.0",
+    "description": "Code for updating the FMI cross-check data",
+    "main": "lib/index.js",
+    "scripts": {
+        "image": "docker build -t modelica/fmi-build .",
+        "start":
+            "docker run -p 9001:9000 -i -t -e AWS_ACCESS_KEY=$AWS_ACCESS_KEY -e AWS_SECRET_KEY=$AWS_SECRET_KEY modelica/fmi-build",
+        "start:local":
+            "docker run -p 9001:9000 -i -t -e AWS_ACCESS_KEY=$AWS_ACCESS_KEY -e AWS_SECRET_KEY=$AWS_SECRET_KEY -v `pwd`/vendors:/home/builder/data/vendors -v `pwd`/site:/home/builder/data/site modelica/fmi-build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/modelica/crosscheck-update.git"
+    },
+    "keywords": ["Modelica", "FMI"],
+    "author": "Michael M. Tiller",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/modelica/crosscheck-update/issues"
+    },
+    "homepage": "https://github.com/modelica/crosscheck-update#readme",
+    "dependencies": {
+        "@modelica/fmi-xc-scripts": "^0.4.0"
+    }
+}
