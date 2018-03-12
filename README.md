@@ -47,3 +47,43 @@ the other directories, the contents of the `build-server` directory is not
 published as an `npm` package but is instead use to (automatically) build a
 [Docker](https://www.docker.com/) image for a container capable of running this
 workflow (either in a one-off mode or as a receiver of webhooks from GitHub).
+
+# Deep Dive
+
+Ultimately, all of what is contained in this repository is used to create a
+build server that generates [the FMI web site](http://fmi-standard.org). Here
+we will provide a bit more detail on how all the pieces fit together and run.
+
+## How the build server image is created
+
+The Docker image of the build server is described by the
+[`Dockerfile`](./build-server/Dockerfile) located in the `build-server`
+directory. The Docker image itself is automatically build whenever this
+repository is changed. The Docker image can be found on the web
+[here](https://hub.docker.com/r/modelica/fmi-build-server/). The actual image
+can be pulled down with the command `docker pull modelica/fmi-build-server`.
+
+## Where is the build server running?
+
+At the moment, the container running the image is hosted on [Digital
+Ocean](http://digitalocean.com). But it is trivial to fire the server up on any
+Docker host. For more details about configuring a Docker host and running the
+build server on it, see the [deployment
+documentation](./build-server/DEPLOYMENT.md).
+
+Note that the DNS entry for the subdomain `build.fmi-standard.org` should point
+to the IP address of the build server because all the vendor GitHub repositories
+(as well as the FMI web site repository) all send a webhook to
+`http://build.fmi-standard.orghooks/fmi-build` when changes are pushed to those
+repositories (thus triggering a re-build).
+
+## How are the vendor repositories processed?
+
+The build server installs the latest published version of the
+`@modelica/fmi-xc-scripts` package (contained in the `xc-scripts` directory) to
+process the vendor data. The [`README`](./xc-scripts/READM.md) file contains
+details on how to use the scripts.
+
+## How can I use the Docker image to do a local build?
+
+TBA
