@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## This script is used to generate the FMI web site in a single pass.  This
 ## means doing all the initialization works and then the actual build

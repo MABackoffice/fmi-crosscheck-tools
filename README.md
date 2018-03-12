@@ -54,7 +54,63 @@ Ultimately, all of what is contained in this repository is used to create a
 build server that generates [the FMI web site](http://fmi-standard.org). Here
 we will provide a bit more detail on how all the pieces fit together and run.
 
-## How the build server image is created
+## What does the build server do?
+
+The build server operates in two phases. The first is a setup phase that
+happens exactly once when the build server starts up. In this phase, the most
+recent versions of all the relevant repositories (vendors + web site) are `clone`d
+locally on the server. They are persisted as long as the server is running.
+These actions correspond to the `init.sh` script in `build-server`.
+
+Once the server starts up, starts listening for `POST` requests on port `80`.
+Any `POST` request to `http://build.fmi-standard.org/hooks/fmi-build` will
+trigger a build. The build process involves invoking the `build.sh` scripts.
+This script pulls the latest versions of all repositories (it is likely that at
+least one has changed since their were `clone`d). Once we have all outstanding
+commits pulled into our working directories, the `process_repo` scripts (from the
+`xc-scripts` directory) is run across all vendor data to compile the processed
+data. This data is then copied into the web site working directory in the
+`_data` directory. When the web site is generated (using `jekyll`) the files in
+the `_data` directory are copied to the static files associated with the web
+site (stored in the `_site` directory). Finally, the generated files are pushed
+to the CDN (currently `netlify`) which has the effect of updating the website at
+`http://fmi-standard.org`.
+
+## Can I use the Docker image to run the build locally?
+
+Tt is also possible to use the Docker image to run the build process
+locally on your machine. The simplest way to do this is use the following
+`docker` command:
+
+```
+$ docker run -it modelica/fmi-build-server ./gen.sh
+```
+
+This will run the entire process from start to finish. You can observe the
+output to see if any issues occur during the build.
+
+A useful variation on this command is:
+
+```
+$ mkdir site
+$ docker run -v site:/usr/builder/data/site/_site -it modelica/fmi-build-server ./gen.sh
+```
+
+Running the build process locally your system may accumulate a number of
+containers and volumes that you have no use for. So it is a good idea to
+occasionally clean things up by running:
+
+```
+$ docker system prune
+```
+
+**NB** Be careful since, as the command tells you when it runs, it will clean up
+all stopped containers and dangling images. If you are doing other things with
+Docker be aware that this might lose other containers or images that you would
+otherwise wish to keep. But if you are only using Docker to do FMI builds, the
+command should be completely safe.
+
+## How the build server image is created?
 
 The Docker image of the build server is described by the
 [`Dockerfile`](./build-server/Dockerfile) located in the `build-server`

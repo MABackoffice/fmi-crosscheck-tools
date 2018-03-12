@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## This script is responsible for all "start up" tasks.  This mainly means grabbing
 ## baseline copies of all repositories.

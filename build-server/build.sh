@@ -29,7 +29,7 @@ bundle exec jekyll b
 #   s3cmd modify -m image/svg+xml s3://$AWS_BUCKET/assets/img/fmi-logo.svg
 # fi
 
-if [[ $NETLIFY_TOKEN!="" && $NETLIFY_SITE ]]
+if [[ $NETLIFY_TOKEN!="" && $NETLIFY_SITE!="" ]]
 then
   netlify deploy -s $NETLIFY_SITE -p /home/builder/data/site/_site --access-token $NETLIFY_TOKEN
 fi
