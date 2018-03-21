@@ -16,11 +16,11 @@
         "react-addons-css-transition-group": "^15.6.2",
         "react-dom": "^16.0.0",
         "react-graph-vis": "^1.0.2",
+        "react-markdown": "^3.3.0",
         "react-scripts-ts": "2.8.0"
     },
     "scripts": {
-        "rename-bundles":
-            "cp build/`node css-bundle.js` build/bundle.css && cp build/`node js-bundle.js` build/bundle.js",
+        "rename-bundles": "cp build/`node css-bundle.js` build/bundle.css && cp build/`node js-bundle.js` build/bundle.js",
         "prepublish": "yarn build",
         "start": "react-scripts-ts start",
         "compile": "tsc --noEmit",

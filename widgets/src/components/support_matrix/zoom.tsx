@@ -8,6 +8,7 @@ import { toolboxDivStyle, importsFromDiv, exportsToDiv } from "./style";
 import { VersionTable, supportBox } from "./version_table";
 import { ButtonStack, Justification } from "./stack";
 import { Status, ToolSummary, ColumnReport } from "@modelica/fmi-data";
+import * as ReactMarkdown from "react-markdown";
 import { Columns } from "./columns";
 
 export interface ZoomViewProps {
@@ -66,7 +67,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             let imp = importReport(id);
             if (!imp) return null;
             return (
-                <Tooltip position={Position.RIGHT} key={imp.id} content={<VersionTable report={imp} />}>
+                <Tooltip position={Position.LEFT} key={imp.id} content={<VersionTable report={imp} />}>
                     <div style={toolboxDivStyle(imp.summary)}>
                         {supportBox(imp.summary, imp.name, {}, () => (this.props.viewState.selected = id))}
                     </div>
@@ -90,7 +91,6 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
         let vendorName = "";
         let vendorURL: string | null = null;
         let desc = "";
-        let homepage: JSX.Element | null = null;
         let email: JSX.Element | null = null;
         let summary: ToolSummary | null = null;
         if (this.props.viewState.selected) {
@@ -101,13 +101,6 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                 vendorName = summary.vendor.displayName;
                 vendorURL = summary.vendor.href;
                 desc = summary.note;
-                if (summary.homepage) {
-                    homepage = (
-                        <a href={summary.homepage} style={{ flexGrow: 1 }}>
-                            <span className="pt-icon-standard pt-icon-info-sign" />&nbsp;Homepage&nbsp;&nbsp;
-                        </a>
-                    );
-                }
                 if (summary.email) {
                     email = (
                         <a href={"mailto:" + summary.email} style={{ flexGrow: 1 }}>
@@ -130,21 +123,28 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                 <div style={{ width: "80%", left: "10%", right: "10%", marginTop: "10vh" }}>
                     <div style={backgrounDivStyle}>
                         <div style={rowDivStyle}>
-                            <h1 style={{ textAlign: "center" }}>{toolName}</h1>
+                            {summary && summary.homepage ? (
+                                <h1 style={{ textAlign: "center" }}>
+                                    <a href={summary.homepage}>{toolName}</a> {email}
+                                </h1>
+                            ) : (
+                                <h1 style={{ textAlign: "center" }}>
+                                    {toolName} {email}
+                                </h1>
+                            )}
                             {vendorURL ? (
-                                <h3 style={{ textAlign: "center" }}>
-                                    <a href={vendorURL}>{vendorName}</a>
+                                <h3 style={{ textAlign: "center", marginTop: "10px" }}>
+                                    by <a href={vendorURL}>{vendorName}</a>
                                 </h3>
                             ) : (
-                                <h3 style={{ textAlign: "center" }}>{vendorName}</h3>
+                                <h3 style={{ textAlign: "center" }}>by {vendorName}</h3>
                             )}
-                            <p style={{ textAlign: "center" }}>{desc}</p>
                             <p style={{ textAlign: "center" }}>
-                                {homepage}
-                                {email}
+                                <ReactMarkdown source={desc} />
                             </p>
-                            <Filter settings={this.props.settings} />
-
+                            <div style={{ display: "flex", justifyContent: "center" }}>
+                                <Filter settings={this.props.settings} />
+                            </div>
                             <Columns>
                                 <div style={exportsToDiv}>
                                     <h4>{toolName} FMUs have been imported by:</h4>
