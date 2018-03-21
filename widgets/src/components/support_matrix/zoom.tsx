@@ -104,7 +104,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                 if (summary.email) {
                     email = (
                         <a href={"mailto:" + summary.email} style={{ flexGrow: 1 }}>
-                            <span className="pt-icon-standard pt-icon-envelope" />
+                            <span className="pt-icon-standard pt-icon-envelope" style={{ verticalAlign: "middle" }} />
                         </a>
                     );
                 }
