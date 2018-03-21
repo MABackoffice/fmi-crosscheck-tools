@@ -2,10 +2,16 @@ import { SupportStatus } from "@modelica/fmi-data";
 import { Colors } from "@blueprintjs/core";
 
 export function toolboxDivStyle(support: SupportStatus) {
-    if (support.passed > 3 && support.rejected === 0 && support.failed === 0)
-        return { ...toolboxDiv, backgroundColor: Colors.FOREST5 };
-    if (support.failed > 0 && support.rejected === 0 && support.passed === 0)
-        return { ...toolboxDiv, backgroundColor: Colors.RED5 };
+    // NB - If you want to have the styling of buttons dependent on the
+    // degree of support, this is where that logic should go...
+
+    // if (support.passed > 3 && support.rejected === 0 && support.failed === 0)
+    //     return { ...toolboxDiv, backgroundColor: Colors.FOREST5 };
+    // if (support.failed > 0 && support.rejected === 0 && support.passed === 0)
+    //     return { ...toolboxDiv, backgroundColor: Colors.RED5 };
+    
+    // NB - For now, we don't color the boxes.  For details on why, see:
+    // https://github.com/modelica/fmi-crosscheck-tools/issues/2
     return { ...toolboxDiv, backgroundColor: Colors.GRAY5 };
 }
 
