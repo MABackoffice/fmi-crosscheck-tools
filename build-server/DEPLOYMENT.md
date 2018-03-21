@@ -10,8 +10,10 @@ $ eval $(docker-machine env cross-check)
 That creates a Docker host.  Then to actually start the server on that host you need to run the command:
 
 ```sh
-$ docker run -d -p 80:9000 --restart always -e NETLIFY_TOKEN=... --name xc modelica/fmi-build-server
+$ docker run -d -p 80:9000 --restart always -e NETLIFY_TOKEN=$NETLIFY_TOKEN --name xc modelica/fmi-build-server
 ```
+
+(assuming you have set the value of the `NETLIFY_TOKEN` environment variable)
 
 ## Monitoring the Server
 
@@ -39,8 +41,10 @@ to run these four commands:
 $ docker stop xc   # Stop existing container
 $ docker rm xc     # Remove existing container
 $ docker pull modelica/fmi-build-server   # Grab latest image
-$ docker run -d -p 80:9000 --restart always -e NETLIFY_TOKEN=... --name xc modelica/fmi-build-server
+$ docker run -d -p 80:9000 --restart always -e NETLIFY_TOKEN=$NETLIFY_TOKEN --name xc modelica/fmi-build-server
 ```
+
+(assuming you have set the value of the `NETLIFY_TOKEN` environment variable)
 
 ## Triggering Builds
 
