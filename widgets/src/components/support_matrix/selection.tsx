@@ -20,13 +20,13 @@ export class Selection extends React.Component<SelectionDetails, {}> {
                 {this.props.label}
                 <div className="pt-select">
                     <select
-                        defaultValue={""}
+                        value={this.props.currentKey}
                         onChange={event =>
-                            props.onChange(event.target.value === "" ? undefined : (event.target.value as string))
+                            props.onChange(event.target.value === "" ? "" : (event.target.value as string))
                         }
                     >
                         {props.options.map((entry, i) => (
-                            <option key={i} selected={entry.key === props.currentKey} value={entry.key}>
+                            <option key={i} value={entry.key}>
                                 {entry.label}
                             </option>
                         ))}

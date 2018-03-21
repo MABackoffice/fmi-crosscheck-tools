@@ -39,7 +39,6 @@ export class Unchecked extends React.Component<UncheckedProps, {}> {
             ? this.props.viewState.uncheckedImporting
             : this.props.viewState.uncheckedExporting;
         let select = (id: string) => {
-            console.log("Selecting: ", id);
             this.props.viewState.selected = id;
         };
         let isOpen =

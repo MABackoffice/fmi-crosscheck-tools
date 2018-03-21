@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { QueryFunction } from "../data";
 import { FMISpinner } from "./spinner";
 import { Filter } from "./filter";
+import { Search } from "./search";
 import { ViewState } from "../state";
 import { ButtonStack, Justification } from "./stack";
 import { ZoomView } from "./zoom";
@@ -52,7 +53,10 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
 
         return (
             <div className="Support" style={{ margin: "10px" }}>
-                <Filter settings={this.viewState} />
+                <div style={{ display: "flex" }}>
+                    <Filter settings={this.viewState} />
+                    <Search settings={this.viewState} />
+                </div>
                 {/* Show spinner if the data hasn't loaded yet */}
                 {this.viewState.loading && FMISpinner}
                 {!this.viewState.loading && (
@@ -118,7 +122,7 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
                                 </div>
                             </Columns>
                         </div>
-                        <ZoomView viewState={this.viewState} tools={columns.tools} />
+                        <ZoomView viewState={this.viewState} settings={this.viewState} tools={columns.tools} />
                         {/* <SupportGraph matrix={this.matrix.get()} /> */}
                     </div>
                 )}

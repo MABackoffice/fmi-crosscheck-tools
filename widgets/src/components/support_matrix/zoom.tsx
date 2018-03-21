@@ -2,6 +2,7 @@ import * as React from "react";
 import { Tooltip, Classes, Overlay, Position } from "@blueprintjs/core";
 import { ViewState } from "../state";
 import { observer } from "mobx-react";
+import { Filter } from "./filter";
 import { toolboxDivStyle, importsFromDiv, exportsToDiv } from "./style";
 import { VersionTable, supportBox } from "./version_table";
 import { ButtonStack, Justification } from "./stack";
@@ -10,6 +11,11 @@ import { Columns } from "./columns";
 
 export interface ZoomViewProps {
     viewState: ViewState;
+    settings: {
+        version: string | undefined;
+        variant: string | undefined;
+        platform: string | undefined;
+    };
     tools: string[];
 }
 
@@ -129,6 +135,8 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                                 {homepage}
                                 {email}
                             </p>
+                            <Filter settings={this.props.settings} />
+
                             <Columns>
                                 <div style={exportsToDiv}>
                                     <h4>{toolName} FMUs have been imported by:</h4>

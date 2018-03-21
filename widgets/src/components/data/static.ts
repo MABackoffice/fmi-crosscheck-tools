@@ -42,7 +42,6 @@ export function loadData(): QueryFunction {
         platform: string | undefined,
     ): Promise<QueryResult> => {
         let tools = await toolsTable;
-        console.dir(tools);
         let results = await resultsTable;
         let matrix = await createMatrixReport(tools, results, {
             version: version,
