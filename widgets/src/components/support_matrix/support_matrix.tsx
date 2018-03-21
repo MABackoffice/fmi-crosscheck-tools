@@ -8,7 +8,7 @@ import { Search } from "./search";
 import { ViewState } from "../state";
 import { ButtonStack, Justification } from "./stack";
 import { ZoomView } from "./zoom";
-import { truncate } from "../utils";
+import { truncate, sortStrings } from "../utils";
 import { Columns } from "./columns";
 import { Unchecked } from "./unchecked";
 import { Colors } from "@blueprintjs/core";
@@ -40,16 +40,27 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
     render() {
         let importStyle = (id: string) => ({ backgroundColor: Colors.FOREST5 });
         let exportStyle = (id: string) => ({ backgroundColor: Colors.FOREST5 });
-        let renderLabel = (id: string) => {
+        let getLabel = (id: string): string => {
             let tool = this.viewState.results.get().tools.find(summary => summary.id === id);
-            if (!tool) return <span>Unknown Tool: {id}</span>; // Should not happen
-            return <span>{truncate(tool.displayName)}</span>;
+            if (!tool) return "Unknown Tool: " + id; // Should not happen
+            return truncate(tool.displayName);
+        };
+        let renderLabel = (id: string) => {
+            return <span>{getLabel(id)}</span>;
+        };
+        let sortByLabel = (aid: string, bid: string) => {
+            let alabel = getLabel(aid).toLowerCase();
+            let blabel = getLabel(bid).toLowerCase();
+            return sortStrings(alabel, blabel);
         };
 
         let columns = this.viewState.columns;
         let exportOnly = columns.export_only.filter(this.viewState.matchesTerm);
+        exportOnly.sort(sortByLabel);
         let both = columns.both.filter(this.viewState.matchesTerm);
+        both.sort(sortByLabel);
         let importOnly = columns.import_only.filter(this.viewState.matchesTerm);
+        importOnly.sort(sortByLabel);
 
         return (
             <div className="Support" style={{ margin: "10px" }}>

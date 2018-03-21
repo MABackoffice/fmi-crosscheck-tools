@@ -3,10 +3,11 @@ import { Tooltip, Classes, Overlay, Position } from "@blueprintjs/core";
 import { ViewState } from "../state";
 import { observer } from "mobx-react";
 import { Filter } from "./filter";
+import { sortStrings } from "../utils";
 import { toolboxDivStyle, importsFromDiv, exportsToDiv } from "./style";
 import { VersionTable, supportBox } from "./version_table";
 import { ButtonStack, Justification } from "./stack";
-import { Status, ToolSummary } from "@modelica/fmi-data";
+import { Status, ToolSummary, ColumnReport } from "@modelica/fmi-data";
 import { Columns } from "./columns";
 
 export interface ZoomViewProps {
@@ -30,6 +31,10 @@ const rowDivStyle: React.CSSProperties = {
     flexDirection: "column",
 };
 
+const sortByColumn = (a: ColumnReport, b: ColumnReport) => {
+    return sortStrings(a.name, b.name);
+};
+
 @observer
 export class ZoomView extends React.Component<ZoomViewProps, {}> {
     render() {
@@ -39,6 +44,9 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             ? this.props.viewState.importsFromSelected.columns
             : [];
         let exportsTo = this.props.viewState.exportsToSelected ? this.props.viewState.exportsToSelected.columns : [];
+
+        importsFrom.sort(sortByColumn);
+        exportsTo.sort(sortByColumn);
 
         let importReport = (id: string) => {
             if (this.props.viewState.importsFromSelected) {

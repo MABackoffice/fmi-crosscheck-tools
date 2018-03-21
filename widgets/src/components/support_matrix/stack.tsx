@@ -25,6 +25,7 @@ export class ButtonStack extends React.Component<ButtonStackProps, {}> {
         let justify: "space-between" | "flex-start" | "flex-end";
         let flexGrow = this.props.justification === Justification.Block ? 1 : 0;
         let intent = this.props.intent ? `pt-intent-${this.props.intent}` : "";
+        let ids = this.props.ids;
         switch (this.props.justification) {
             case Justification.RaggedLeft:
                 justify = "flex-end";
@@ -38,7 +39,7 @@ export class ButtonStack extends React.Component<ButtonStackProps, {}> {
         }
         return (
             <div style={{ ...this.props.style, display: "flex", flexWrap: "wrap", justifyContent: justify }}>
-                {this.props.ids.map((id, ti) => {
+                {ids.map((id, ti) => {
                     return (
                         <div key={id} style={{ margin: 2, flexGrow: flexGrow, textAlign: "center" }}>
                             <Button
