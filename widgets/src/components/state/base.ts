@@ -2,7 +2,7 @@ import { observable, computed } from "mobx";
 import { promisedComputed } from "computed-async-mobx";
 import { MatrixReport, RowReport, Status, ToolSummary, FMIVersion, FMIVariant } from "@modelica/fmi-data";
 import { QueryFunction, QueryResult } from "../data";
-import { Columns, UncheckedSupport, ComputedProperties } from "./types";
+import { Columns, UncheckedSupport, StateController } from "./types";
 
 const emptyMatrix: MatrixReport = { tools: [], exportsTo: [], importsFrom: [] };
 const emptyResult: QueryResult = { formatVersion: "1", matrix: emptyMatrix, tools: [] };
@@ -18,7 +18,7 @@ const emptyResult: QueryResult = { formatVersion: "1", matrix: emptyMatrix, tool
  *
  * TODO: Write some tests to test the logic in these @computed properties
  */
-export class BaseState implements ComputedProperties {
+export class BaseState {
     /** Currently selected tool */
     @observable protected currentSelection: string | null = null;
     /** Version of FMI to filter on (if any) */
@@ -31,10 +31,12 @@ export class BaseState implements ComputedProperties {
     @observable protected showUnchecked = false;
     /** A search term */
     @observable protected searchTerm: string = "";
+}
 
+export class ComputedProperties {
     /** These are the results of the query. */
     results = promisedComputed<QueryResult>(emptyResult, () => {
-        return this.query(this.currentVersion, this.currentVariant, this.currentPlatform);
+        return this.query(this.state.version, this.state.variant, this.state.platform);
     });
 
     @computed
@@ -82,10 +84,10 @@ export class BaseState implements ComputedProperties {
     /** List of all tools that exported FMUs that were imported from the current tool */
     @computed
     get exportsToSelected(): RowReport | null {
-        if (this.currentSelection == null) return null;
+        if (this.state.selection == null) return null;
 
         for (let i = 0; i < this.matrix.exportsTo.length; i++) {
-            if (this.matrix.exportsTo[i].id === this.currentSelection) return this.matrix.exportsTo[i];
+            if (this.matrix.exportsTo[i].id === this.state.selection) return this.matrix.exportsTo[i];
         }
         // Happens if tool doesn't support export
         return null;
@@ -94,10 +96,10 @@ export class BaseState implements ComputedProperties {
     /** List of all tools that imported FMUs that were exported by the current tool */
     @computed
     get importsFromSelected(): RowReport | null {
-        if (this.currentSelection == null) return null;
+        if (this.state.selection == null) return null;
 
         for (let i = 0; i < this.matrix.importsFrom.length; i++) {
-            if (this.matrix.importsFrom[i].id === this.currentSelection) return this.matrix.importsFrom[i];
+            if (this.matrix.importsFrom[i].id === this.state.selection) return this.matrix.importsFrom[i];
         }
         // Happens if tool doesn't export
         return null;
@@ -105,22 +107,22 @@ export class BaseState implements ComputedProperties {
 
     @computed
     get incv1() {
-        return this.currentVersion === FMIVersion.FMI1 || this.currentVersion === undefined;
+        return this.state.version === FMIVersion.FMI1 || this.state.version === undefined;
     }
 
     @computed
     get incv2() {
-        return this.currentVersion === FMIVersion.FMI2 || this.currentVersion === undefined;
+        return this.state.version === FMIVersion.FMI2 || this.state.version === undefined;
     }
 
     @computed
     get inccs() {
-        return this.currentVariant === FMIVariant.CS || this.currentVariant === undefined;
+        return this.state.variant === FMIVariant.CS || this.state.variant === undefined;
     }
 
     @computed
     get incme() {
-        return this.currentVariant === FMIVariant.ME || this.currentVariant === undefined;
+        return this.state.variant === FMIVariant.ME || this.state.variant === undefined;
     }
 
     /**
@@ -199,24 +201,24 @@ export class BaseState implements ComputedProperties {
 
     public matchesTerm = (id: string) => {
         /* If the search term is an empty string, it matches everything */
-        if (this.searchTerm === "") return true;
+        if (this.state.search === "") return true;
 
         /* Get ToolSummary */
         let summary = this.results.get().tools.find(tool => tool.id === id);
         if (!summary) return false;
 
         /* Check the tool's display name */
-        let matchesName = match(this.searchTerm, summary.displayName);
+        let matchesName = match(this.state.search, summary.displayName);
         if (matchesName) return true;
 
         /* Check the vendor information */
-        let matchesVendor = match(this.searchTerm, summary.vendor.displayName);
+        let matchesVendor = match(this.state.search, summary.vendor.displayName);
         if (matchesVendor) return true;
 
         return false;
     };
 
-    constructor(protected query: QueryFunction) {}
+    constructor(protected state: StateController, protected query: QueryFunction) {}
 
     private isImporting(tool: ToolSummary, status: Status) {
         return (

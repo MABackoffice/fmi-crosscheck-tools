@@ -1,7 +1,6 @@
 import { BaseState } from "./base";
 import { StateController } from "./types";
 import { computed } from "mobx";
-import { QueryFunction } from "../data";
 
 export class MemoryState extends BaseState implements StateController {
     @computed
@@ -27,10 +26,6 @@ export class MemoryState extends BaseState implements StateController {
     @computed
     get unchecked() {
         return this.showUnchecked;
-    }
-
-    constructor(query: QueryFunction) {
-        super(query);
     }
 
     setSelection(id: string | null) {

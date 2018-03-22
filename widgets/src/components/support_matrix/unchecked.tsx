@@ -1,11 +1,12 @@
 import * as React from "react";
-import { StateController } from "../state";
+import { StateController, ComputedProperties } from "../state";
 import { observer } from "mobx-react";
 import { Collapse } from "@blueprintjs/core";
 
 export interface UncheckedProps {
     imports: boolean;
     controller: StateController;
+    computed: ComputedProperties;
 }
 
 function describe(level: string, intent: string, list: string[], select: (id: string) => void): JSX.Element {
@@ -30,8 +31,8 @@ function describe(level: string, intent: string, list: string[], select: (id: st
 export class Unchecked extends React.Component<UncheckedProps, {}> {
     render() {
         let support = this.props.imports
-            ? this.props.controller.uncheckedImporting
-            : this.props.controller.uncheckedExporting;
+            ? this.props.computed.uncheckedImporting
+            : this.props.computed.uncheckedExporting;
         let select = (id: string) => {
             this.props.controller.setSelection(id);
         };
@@ -45,13 +46,13 @@ export class Unchecked extends React.Component<UncheckedProps, {}> {
                     {describe(
                         "Available",
                         "warning",
-                        support.available.filter(this.props.controller.matchesTerm),
+                        support.available.filter(this.props.computed.matchesTerm),
                         select,
                     )}
                     {describe(
                         "Planning Support",
                         "default",
-                        support.planned.filter(this.props.controller.matchesTerm),
+                        support.planned.filter(this.props.computed.matchesTerm),
                         select,
                     )}
                 </Collapse>

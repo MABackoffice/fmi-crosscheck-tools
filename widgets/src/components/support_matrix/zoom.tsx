@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Tooltip, Classes, Overlay, Position } from "@blueprintjs/core";
-import { StateController } from "../state";
+import { StateController, ComputedProperties } from "../state";
 import { observer } from "mobx-react";
 import { Filter } from "./filter";
 import { sortStrings } from "../utils";
@@ -13,6 +13,7 @@ import { Columns } from "./columns";
 
 export interface ZoomViewProps {
     controller: StateController;
+    computed: ComputedProperties;
     tools: string[];
 }
 
@@ -36,24 +37,24 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
     render() {
         let selected = this.props.controller.selection;
         let open = !!selected;
-        let importsFrom = this.props.controller.importsFromSelected
-            ? this.props.controller.importsFromSelected.columns
+        let importsFrom = this.props.computed.importsFromSelected
+            ? this.props.computed.importsFromSelected.columns
             : [];
-        let exportsTo = this.props.controller.exportsToSelected ? this.props.controller.exportsToSelected.columns : [];
+        let exportsTo = this.props.computed.exportsToSelected ? this.props.computed.exportsToSelected.columns : [];
 
         importsFrom.sort(sortByColumn);
         exportsTo.sort(sortByColumn);
 
         let importReport = (id: string) => {
-            if (this.props.controller.importsFromSelected) {
-                return this.props.controller.importsFromSelected.columns.find(x => x.id === id);
+            if (this.props.computed.importsFromSelected) {
+                return this.props.computed.importsFromSelected.columns.find(x => x.id === id);
             }
             return null;
         };
 
         let exportReport = (id: string) => {
-            if (this.props.controller.exportsToSelected) {
-                return this.props.controller.exportsToSelected.columns.find(x => x.id === id);
+            if (this.props.computed.exportsToSelected) {
+                return this.props.computed.exportsToSelected.columns.find(x => x.id === id);
             }
             return null;
         };
@@ -90,7 +91,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
         let summary: ToolSummary | null = null;
         if (this.props.controller.selection) {
             summary =
-                this.props.controller.results.get().tools.find(t => t.id === this.props.controller.selection) || null;
+                this.props.computed.results.get().tools.find(t => t.id === this.props.controller.selection) || null;
             if (summary) {
                 toolName = summary.displayName;
                 vendorName = summary.vendor.displayName;
