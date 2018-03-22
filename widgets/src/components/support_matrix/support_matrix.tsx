@@ -5,7 +5,7 @@ import { QueryFunction } from "../data";
 import { FMISpinner } from "./spinner";
 import { Filter } from "./filter";
 import { Search } from "./search";
-import { StateController, MemoryState, ComputedProperties } from "../state";
+import { StateController, RouterState, ComputedProperties } from "../state";
 import { ButtonStack, Justification } from "./stack";
 import { ZoomView } from "./zoom";
 import { truncate, sortStrings } from "../utils";
@@ -35,7 +35,7 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
     constructor(props: SupportMatrixProps, context: {}) {
         super(props, context);
         // TODO: Use new React 16.3 Context API to create a provider/consumer pair...
-        this.controller = new MemoryState();
+        this.controller = new RouterState();
         this.computed = new ComputedProperties(this.controller, props.query);
     }
 

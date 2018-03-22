@@ -1,7 +1,3 @@
-// import { PromisedComputedValue } from "computed-async-mobx";
-// import { QueryResult } from "../data";
-// import { RowReport } from "@modelica/fmi-data";
-
 export interface FilterController {
     readonly selection: string | null;
     readonly version: string | null;
@@ -20,18 +16,6 @@ export interface SearchController {
     setSearch(term: string): void;
     setUnchecked(flag: boolean): void;
 }
-
-// export interface ComputedProperties {
-//     results: PromisedComputedValue<QueryResult>;
-//     columns: Columns;
-//     loading: boolean;
-//     uncheckedImporting: UncheckedSupport;
-//     uncheckedExporting: UncheckedSupport;
-//     importsFromSelected: RowReport | null;
-//     exportsToSelected: RowReport | null;
-
-//     matchesTerm(id: string): boolean;
-// }
 
 export type StateController = FilterController & SearchController;
 

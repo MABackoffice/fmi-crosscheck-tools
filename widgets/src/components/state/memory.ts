@@ -1,49 +1,41 @@
-import { BaseState } from "./base";
 import { StateController } from "./types";
-import { computed } from "mobx";
+import { observable } from "mobx";
 
-export class MemoryState extends BaseState implements StateController {
-    @computed
-    get selection() {
-        return this.currentSelection;
-    }
-    @computed
-    get version() {
-        return this.currentVersion;
-    }
-    @computed
-    get variant() {
-        return this.currentVariant;
-    }
-    @computed
-    get platform() {
-        return this.currentPlatform;
-    }
-    @computed
-    get search() {
-        return this.searchTerm;
-    }
-    @computed
-    get unchecked() {
-        return this.showUnchecked;
-    }
+/**
+ * MemoryState implements the StateController interface by simply declaring a bunch
+ * of @observable variables internally and then providing setters to manipulate
+ * them (remember, the StateController marks all the states as readonly).
+ */
+export class MemoryState implements StateController {
+    /** Currently selected tool */
+    @observable selection: string | null = null;
+    /** Version of FMI to filter on (if any) */
+    @observable version: string | null = null;
+    /** Variant of FMI to filter on (if any) */
+    @observable variant: string | null = null;
+    /** Platform to filter on (if any) */
+    @observable platform: string | null = null;
+    /** Whether to show available and planned support */
+    @observable unchecked = false;
+    /** A search term */
+    @observable search: string = "";
 
     setSelection(id: string | null) {
-        this.currentSelection = id;
+        this.selection = id;
     }
     setVersion(id: string | null) {
-        this.currentVersion = id;
+        this.version = id;
     }
     setVariant(id: string | null) {
-        this.currentVariant = id;
+        this.variant = id;
     }
     setPlatform(id: string | null) {
-        this.currentPlatform = id;
+        this.platform = id;
     }
     setSearch(term: string) {
-        this.searchTerm = term;
+        this.search = term;
     }
     setUnchecked(flag: boolean) {
-        this.showUnchecked = true;
+        this.unchecked = flag;
     }
 }
