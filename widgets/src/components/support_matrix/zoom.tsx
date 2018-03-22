@@ -69,7 +69,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             return (
                 <Tooltip position={Position.LEFT} key={imp.id} content={<VersionTable report={imp} />}>
                     <div style={toolboxDivStyle(imp.summary)}>
-                        {supportBox(imp.summary, imp.name, {}, () => (this.props.viewState.selected = id))}
+                        {supportBox(imp.summary, imp.name, {}, () => this.props.viewState.select(id))}
                     </div>
                 </Tooltip>
             );
@@ -81,7 +81,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             return (
                 <Tooltip position={Position.RIGHT} key={exp.id} content={<VersionTable report={exp} />}>
                     <div style={toolboxDivStyle(exp.summary)}>
-                        {supportBox(exp.summary, exp.name, {}, () => (this.props.viewState.selected = id))}
+                        {supportBox(exp.summary, exp.name, {}, () => this.props.viewState.select(id))}
                     </div>
                 </Tooltip>
             );
@@ -115,7 +115,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             <Overlay
                 className={Classes.OVERLAY_SCROLL_CONTAINER}
                 isOpen={open}
-                onClose={() => (this.props.viewState.selected = null)}
+                onClose={() => this.props.viewState.select(null)}
                 lazy={true}
                 transitionDuration={1}
             >

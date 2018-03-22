@@ -49,7 +49,7 @@ export class ButtonStack extends React.Component<ButtonStackProps, {}> {
                                     ...this.props.buttonStyle(id),
                                 }}
                                 active={this.props.viewState.selected === id}
-                                onClick={() => (this.props.viewState.selected = id)}
+                                onClick={() => this.props.viewState.select(id)}
                             >
                                 {this.props.renderLabel(id)}
                             </Button>

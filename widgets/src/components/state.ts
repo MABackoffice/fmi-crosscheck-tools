@@ -1,10 +1,17 @@
-import { observable, computed } from "mobx";
+import { observable, computed, action, reaction } from "mobx";
 import { promisedComputed } from "computed-async-mobx";
 import { MatrixReport, RowReport, Status, ToolSummary, FMIVersion, FMIVariant } from "@modelica/fmi-data";
 import { QueryFunction, QueryResult } from "./data";
+import createHistory from "history/createBrowserHistory";
+import { History } from "history";
+import * as qs from "qs";
 
 const emptyMatrix: MatrixReport = { tools: [], exportsTo: [], importsFrom: [] };
 const emptyResult: QueryResult = { formatVersion: "1", matrix: emptyMatrix, tools: [] };
+
+interface SearchParameters {
+    selection?: string;
+}
 
 export interface Columns {
     tools: string[];
@@ -26,7 +33,11 @@ export interface UncheckedSupport {
  */
 export class ViewState {
     /** Currently selected tool */
-    @observable selected: string | null = null;
+    @observable private currentSelection: string | null = null;
+    @computed
+    get selected(): string | null {
+        return this.currentSelection;
+    }
     /** Version of FMI to filter on (if any) */
     @observable version: string | undefined = undefined;
     /** Variant of FMI to filter on (if any) */
@@ -47,6 +58,19 @@ export class ViewState {
     results = promisedComputed<QueryResult>(emptyResult, () => {
         return this.query(this.version, this.variant, this.platform);
     });
+
+    private history: History;
+
+    @action
+    select = (selection: string | null) => {
+        if (selection) {
+            this.history.push({
+                search: "?selection=" + selection,
+            });
+        } else {
+            this.history.push({ search: "" });
+        }
+    };
 
     @computed
     get matrix() {
@@ -227,7 +251,38 @@ export class ViewState {
         return false;
     };
 
-    constructor(protected query: QueryFunction) {}
+    constructor(protected query: QueryFunction) {
+        this.history = createHistory();
+
+        // Get the current location.
+        const location = this.history.location;
+
+        let handler: History.LocationListener = (loc, act) => {
+            let search = qs.parse(loc.search.substring(1)) as SearchParameters;
+            let selection = search.selection || "";
+            if (selection !== this.currentSelection) {
+                this.currentSelection = selection;
+            }
+        };
+
+        // Listen for changes to the current location.
+        this.history.listen(handler);
+
+        handler(location, "PUSH");
+
+        reaction(
+            () => this.currentSelection,
+            selection => {
+                this.select(selection);
+            },
+        );
+
+        // Use push, replace, and go to navigate around.
+        // history.push("/home", { some: "state" });
+
+        // To stop listening, call the function returned from listen().
+        // unlisten();
+    }
 
     private isImporting(tool: ToolSummary, status: Status) {
         return (
