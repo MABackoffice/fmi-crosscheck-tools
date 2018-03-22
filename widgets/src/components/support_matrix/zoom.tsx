@@ -119,20 +119,20 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                     <div style={backgrounDivStyle}>
                         <div style={rowDivStyle}>
                             {summary && summary.homepage ? (
-                                <h1 style={{ textAlign: "center" }}>
+                                <h2 style={{ textAlign: "center" }}>
                                     <a href={summary.homepage}>{toolName}</a> {email}
-                                </h1>
+                                </h2>
                             ) : (
-                                <h1 style={{ textAlign: "center" }}>
+                                <h2 style={{ textAlign: "center" }}>
                                     {toolName} {email}
-                                </h1>
+                                </h2>
                             )}
                             {vendorURL ? (
-                                <h3 style={{ textAlign: "center", marginTop: "10px" }}>
+                                <h4 style={{ textAlign: "center", marginTop: "10px" }}>
                                     by <a href={vendorURL}>{vendorName}</a>
-                                </h3>
+                                </h4>
                             ) : (
-                                <h3 style={{ textAlign: "center" }}>by {vendorName}</h3>
+                                <h4 style={{ textAlign: "center" }}>by {vendorName}</h4>
                             )}
                             <p style={{ textAlign: "center" }}>
                                 <ReactMarkdown source={desc} />
@@ -142,7 +142,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                             </div>
                             <Columns>
                                 <div style={exportsToDiv}>
-                                    <h4>{toolName} FMUs have been imported by:</h4>
+                                    <h6>{toolName} FMUs have been imported by:</h6>
                                     <div>
                                         {exportsTo.length === 0 &&
                                             summary && (
@@ -166,7 +166,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                                     </div>
                                 </div>
                                 <div style={importsFromDiv}>
-                                    <h4>{toolName} imports FMUs from:</h4>
+                                    <h6>{toolName} imports FMUs from:</h6>
                                     <div>
                                         {importsFrom.length === 0 &&
                                             summary && (
