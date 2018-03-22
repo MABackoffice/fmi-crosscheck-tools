@@ -1,4 +1,4 @@
-import { StateController } from "./types";
+import { StateController } from "./controller";
 import { observable } from "mobx";
 
 /**

@@ -1,4 +1,4 @@
-import { StateController } from "./types";
+import { StateController } from "./controller";
 import { observable, action } from "mobx";
 import { History } from "history";
 import createHistory from "history/createBrowserHistory";
@@ -13,9 +13,18 @@ interface QueryParameters {
 }
 
 /**
- * MemoryState implements the StateController interface by simply declaring a bunch
- * of @observable variables internally and then providing setters to manipulate
- * them (remember, the StateController marks all the states as readonly).
+ * RouterState is an alternate implementation of StateController where
+ * the single source of truth is the location in the history (i.e., drawn from
+ * the window.location).  Here we use a collection of @observables effectively
+ * as "subjects" in the RxJS sense.  But the single source of truth comes from
+ * the history API.  By subscribing to the history, we are able to detect
+ * changes in location and update the internal states in response.  For setting
+ * state, we use the pushState method on history to change the current location
+ * (and our history subscription then picks up those changes just as if the user
+ * had types the location change in themselves or even pasted a link).
+ *
+ * The big advantage of this approach to router state is that it provides
+ * DEEP LINKING into different views.
  */
 export class RouterState implements StateController {
     protected history: History;

@@ -2,16 +2,31 @@ import { computed } from "mobx";
 import { promisedComputed } from "computed-async-mobx";
 import { MatrixReport, RowReport, Status, ToolSummary, FMIVersion, FMIVariant } from "@modelica/fmi-data";
 import { QueryFunction, QueryResult } from "../data";
-import { Columns, UncheckedSupport, StateController } from "./types";
+import { Columns, UncheckedSupport } from "./types";
+import { StateController } from "./controller";
 
 const emptyMatrix: MatrixReport = { tools: [], exportsTo: [], importsFrom: [] };
 const emptyResult: QueryResult = { formatVersion: "1", matrix: emptyMatrix, tools: [] };
 
+/**
+ * This class takes care of computing all derived quantities.  It takes a state controller
+ * as input.  This allows it to observe the changes in state.  It then builds up
+ * a collection of @computed methods that perform the actual computations
+ * required for the derived quantities.
+ *
+ * This used to be lumped in together with the state, but by separating it out
+ * we not only get a clean delineation between the state vs. derived properties,
+ * but it means that we can perform these computations for any state representation.
+ * This was particularly important when switching from memory based state
+ * management to a route based approach.
+ */
 export class ComputedProperties {
     /** These are the results of the query. */
     results = promisedComputed<QueryResult>(emptyResult, () => {
         return this.query(this.state.version, this.state.variant, this.state.platform);
     });
+
+    constructor(protected state: StateController, protected query: QueryFunction) {}
 
     @computed
     get matrix() {
@@ -191,8 +206,6 @@ export class ComputedProperties {
 
         return false;
     };
-
-    constructor(protected state: StateController, protected query: QueryFunction) {}
 
     private isImporting(tool: ToolSummary, status: Status) {
         return (

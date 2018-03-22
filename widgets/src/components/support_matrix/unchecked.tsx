@@ -38,9 +38,6 @@ export class Unchecked extends React.Component<UncheckedProps, {}> {
         };
         let isOpen =
             (this.props.controller.unchecked || !!this.props.controller.search) && !this.props.controller.platform;
-        console.log("isOpen = ", isOpen);
-        console.log("unchecked = ", this.props.controller.unchecked);
-        console.log("platform = ", this.props.controller.platform);
         return (
             <div style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
                 <div style={{ flexGrow: 1, marginTop: "20px" }} />
