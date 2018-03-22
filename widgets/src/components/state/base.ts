@@ -1,76 +1,41 @@
-import { observable, computed, action, reaction } from "mobx";
+import { observable, computed } from "mobx";
 import { promisedComputed } from "computed-async-mobx";
 import { MatrixReport, RowReport, Status, ToolSummary, FMIVersion, FMIVariant } from "@modelica/fmi-data";
-import { QueryFunction, QueryResult } from "./data";
-import createHistory from "history/createBrowserHistory";
-import { History } from "history";
-import * as qs from "qs";
+import { QueryFunction, QueryResult } from "../data";
+import { Columns, UncheckedSupport, ComputedProperties } from "./types";
 
 const emptyMatrix: MatrixReport = { tools: [], exportsTo: [], importsFrom: [] };
 const emptyResult: QueryResult = { formatVersion: "1", matrix: emptyMatrix, tools: [] };
 
-interface SearchParameters {
-    selection?: string;
-}
-
-export interface Columns {
-    tools: string[];
-    import_only: string[];
-    both: string[];
-    export_only: string[];
-}
-
-export interface UncheckedSupport {
-    planned: string[];
-    available: string[];
-}
-
 /**
- * The ViewState class encapsulates the current status of the query subject
- * to filtering on FMI version, variant and platform.
+ * The BaseState class encapsulates the current status of the query subject
+ * to filtering on FMI version, variant and platform.  It includes internal
+ * variables to represent the currently selected tool, version, variant,
+ * platform, search term and whether to display unchecked support.
+ *
+ * However, it is **not** an implementation of StateController (yet).  It
+ * simply acts as a base class for such a controller.
  *
  * TODO: Write some tests to test the logic in these @computed properties
  */
-export class ViewState {
+export class BaseState implements ComputedProperties {
     /** Currently selected tool */
-    @observable private currentSelection: string | null = null;
-    @computed
-    get selected(): string | null {
-        return this.currentSelection;
-    }
+    @observable protected currentSelection: string | null = null;
     /** Version of FMI to filter on (if any) */
-    @observable version: string | undefined = undefined;
+    @observable protected currentVersion: string | null = null;
     /** Variant of FMI to filter on (if any) */
-    @observable variant: string | undefined = undefined;
+    @observable protected currentVariant: string | null = null;
     /** Platform to filter on (if any) */
-    @observable platform: string | undefined = undefined;
+    @observable protected currentPlatform: string | null = null;
     /** Whether to show available and planned support */
-    @observable showUnchecked = false;
+    @observable protected showUnchecked = false;
     /** A search term */
-    @observable search: string = "";
-
-    /** The MatrixReport instance for the given filter parameters */
-    // matrix = promisedComputed<MatrixReport>(emptyMatrix, () => {
-    //     return this.query(this.version, this.variant, this.platform);
-    // });
+    @observable protected searchTerm: string = "";
 
     /** These are the results of the query. */
     results = promisedComputed<QueryResult>(emptyResult, () => {
-        return this.query(this.version, this.variant, this.platform);
+        return this.query(this.currentVersion, this.currentVariant, this.currentPlatform);
     });
-
-    private history: History;
-
-    @action
-    select = (selection: string | null) => {
-        if (selection) {
-            this.history.push({
-                search: "?selection=" + selection,
-            });
-        } else {
-            this.history.push({ search: "" });
-        }
-    };
 
     @computed
     get matrix() {
@@ -117,10 +82,10 @@ export class ViewState {
     /** List of all tools that exported FMUs that were imported from the current tool */
     @computed
     get exportsToSelected(): RowReport | null {
-        if (this.selected == null) return null;
+        if (this.currentSelection == null) return null;
 
         for (let i = 0; i < this.matrix.exportsTo.length; i++) {
-            if (this.matrix.exportsTo[i].id === this.selected) return this.matrix.exportsTo[i];
+            if (this.matrix.exportsTo[i].id === this.currentSelection) return this.matrix.exportsTo[i];
         }
         // Happens if tool doesn't support export
         return null;
@@ -129,10 +94,10 @@ export class ViewState {
     /** List of all tools that imported FMUs that were exported by the current tool */
     @computed
     get importsFromSelected(): RowReport | null {
-        if (this.selected == null) return null;
+        if (this.currentSelection == null) return null;
 
         for (let i = 0; i < this.matrix.importsFrom.length; i++) {
-            if (this.matrix.importsFrom[i].id === this.selected) return this.matrix.importsFrom[i];
+            if (this.matrix.importsFrom[i].id === this.currentSelection) return this.matrix.importsFrom[i];
         }
         // Happens if tool doesn't export
         return null;
@@ -140,22 +105,22 @@ export class ViewState {
 
     @computed
     get incv1() {
-        return this.version === FMIVersion.FMI1 || this.version === undefined;
+        return this.currentVersion === FMIVersion.FMI1 || this.currentVersion === undefined;
     }
 
     @computed
     get incv2() {
-        return this.version === FMIVersion.FMI2 || this.version === undefined;
+        return this.currentVersion === FMIVersion.FMI2 || this.currentVersion === undefined;
     }
 
     @computed
     get inccs() {
-        return this.variant === FMIVariant.CS || this.variant === undefined;
+        return this.currentVariant === FMIVariant.CS || this.currentVariant === undefined;
     }
 
     @computed
     get incme() {
-        return this.variant === FMIVariant.ME || this.variant === undefined;
+        return this.currentVariant === FMIVariant.ME || this.currentVariant === undefined;
     }
 
     /**
@@ -234,55 +199,24 @@ export class ViewState {
 
     public matchesTerm = (id: string) => {
         /* If the search term is an empty string, it matches everything */
-        if (this.search === "") return true;
+        if (this.searchTerm === "") return true;
 
         /* Get ToolSummary */
         let summary = this.results.get().tools.find(tool => tool.id === id);
         if (!summary) return false;
 
         /* Check the tool's display name */
-        let matchesName = match(this.search, summary.displayName);
+        let matchesName = match(this.searchTerm, summary.displayName);
         if (matchesName) return true;
 
         /* Check the vendor information */
-        let matchesVendor = match(this.search, summary.vendor.displayName);
+        let matchesVendor = match(this.searchTerm, summary.vendor.displayName);
         if (matchesVendor) return true;
 
         return false;
     };
 
-    constructor(protected query: QueryFunction) {
-        this.history = createHistory();
-
-        // Get the current location.
-        const location = this.history.location;
-
-        let handler: History.LocationListener = (loc, act) => {
-            let search = qs.parse(loc.search.substring(1)) as SearchParameters;
-            let selection = search.selection || "";
-            if (selection !== this.currentSelection) {
-                this.currentSelection = selection;
-            }
-        };
-
-        // Listen for changes to the current location.
-        this.history.listen(handler);
-
-        handler(location, "PUSH");
-
-        reaction(
-            () => this.currentSelection,
-            selection => {
-                this.select(selection);
-            },
-        );
-
-        // Use push, replace, and go to navigate around.
-        // history.push("/home", { some: "state" });
-
-        // To stop listening, call the function returned from listen().
-        // unlisten();
-    }
+    constructor(protected query: QueryFunction) {}
 
     private isImporting(tool: ToolSummary, status: Status) {
         return (

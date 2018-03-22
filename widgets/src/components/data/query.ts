@@ -7,7 +7,7 @@ export interface QueryResult {
 }
 
 export type QueryFunction = (
-    version: string | undefined,
-    variant: string | undefined,
-    platform: string | undefined,
+    version: string | null,
+    variant: string | null,
+    platform: string | null,
 ) => Promise<QueryResult>;

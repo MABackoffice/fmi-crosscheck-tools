@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Tooltip, Classes, Overlay, Position } from "@blueprintjs/core";
-import { ViewState } from "../state";
+import { StateController } from "../state";
 import { observer } from "mobx-react";
 import { Filter } from "./filter";
 import { sortStrings } from "../utils";
@@ -12,12 +12,7 @@ import * as ReactMarkdown from "react-markdown";
 import { Columns } from "./columns";
 
 export interface ZoomViewProps {
-    viewState: ViewState;
-    settings: {
-        version: string | undefined;
-        variant: string | undefined;
-        platform: string | undefined;
-    };
+    controller: StateController;
     tools: string[];
 }
 
@@ -39,26 +34,26 @@ const sortByColumn = (a: ColumnReport, b: ColumnReport) => {
 @observer
 export class ZoomView extends React.Component<ZoomViewProps, {}> {
     render() {
-        let selected = this.props.viewState.selected;
+        let selected = this.props.controller.selection;
         let open = !!selected;
-        let importsFrom = this.props.viewState.importsFromSelected
-            ? this.props.viewState.importsFromSelected.columns
+        let importsFrom = this.props.controller.importsFromSelected
+            ? this.props.controller.importsFromSelected.columns
             : [];
-        let exportsTo = this.props.viewState.exportsToSelected ? this.props.viewState.exportsToSelected.columns : [];
+        let exportsTo = this.props.controller.exportsToSelected ? this.props.controller.exportsToSelected.columns : [];
 
         importsFrom.sort(sortByColumn);
         exportsTo.sort(sortByColumn);
 
         let importReport = (id: string) => {
-            if (this.props.viewState.importsFromSelected) {
-                return this.props.viewState.importsFromSelected.columns.find(x => x.id === id);
+            if (this.props.controller.importsFromSelected) {
+                return this.props.controller.importsFromSelected.columns.find(x => x.id === id);
             }
             return null;
         };
 
         let exportReport = (id: string) => {
-            if (this.props.viewState.exportsToSelected) {
-                return this.props.viewState.exportsToSelected.columns.find(x => x.id === id);
+            if (this.props.controller.exportsToSelected) {
+                return this.props.controller.exportsToSelected.columns.find(x => x.id === id);
             }
             return null;
         };
@@ -69,7 +64,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             return (
                 <Tooltip position={Position.LEFT} key={imp.id} content={<VersionTable report={imp} />}>
                     <div style={toolboxDivStyle(imp.summary)}>
-                        {supportBox(imp.summary, imp.name, {}, () => this.props.viewState.select(id))}
+                        {supportBox(imp.summary, imp.name, {}, () => this.props.controller.setSelection(id))}
                     </div>
                 </Tooltip>
             );
@@ -81,7 +76,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             return (
                 <Tooltip position={Position.RIGHT} key={exp.id} content={<VersionTable report={exp} />}>
                     <div style={toolboxDivStyle(exp.summary)}>
-                        {supportBox(exp.summary, exp.name, {}, () => this.props.viewState.select(id))}
+                        {supportBox(exp.summary, exp.name, {}, () => this.props.controller.setSelection(id))}
                     </div>
                 </Tooltip>
             );
@@ -93,9 +88,9 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
         let desc = "";
         let email: JSX.Element | null = null;
         let summary: ToolSummary | null = null;
-        if (this.props.viewState.selected) {
+        if (this.props.controller.selection) {
             summary =
-                this.props.viewState.results.get().tools.find(t => t.id === this.props.viewState.selected) || null;
+                this.props.controller.results.get().tools.find(t => t.id === this.props.controller.selection) || null;
             if (summary) {
                 toolName = summary.displayName;
                 vendorName = summary.vendor.displayName;
@@ -115,7 +110,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
             <Overlay
                 className={Classes.OVERLAY_SCROLL_CONTAINER}
                 isOpen={open}
-                onClose={() => this.props.viewState.select(null)}
+                onClose={() => this.props.controller.setSelection(null)}
                 lazy={true}
                 transitionDuration={1}
             >
@@ -142,7 +137,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                                 <ReactMarkdown source={desc} />
                             </p>
                             <div style={{ display: "flex", justifyContent: "center" }}>
-                                <Filter settings={this.props.settings} />
+                                <Filter settings={this.props.controller} />
                             </div>
                             <Columns>
                                 <div style={exportsToDiv}>
@@ -161,7 +156,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                                             )}
                                         <ButtonStack
                                             ids={exportsTo.map(exp => exp.id)}
-                                            viewState={this.props.viewState}
+                                            controller={this.props.controller}
                                             buttonStyle={id => ({})}
                                             intent="none"
                                             justification={Justification.RaggedLeft}
@@ -185,7 +180,7 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                                             )}
                                         <ButtonStack
                                             ids={importsFrom.map(imp => imp.id)}
-                                            viewState={this.props.viewState}
+                                            controller={this.props.controller}
                                             buttonStyle={id => ({})}
                                             intent="none"
                                             justification={Justification.RaggedRight}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ViewState } from "../state";
+import { StateController } from "../state";
 import { Button } from "@blueprintjs/core";
 import { observer } from "mobx-react";
 
@@ -11,7 +11,7 @@ export enum Justification {
 
 export interface ButtonStackProps {
     ids: string[];
-    viewState: ViewState;
+    controller: StateController;
     buttonStyle: (id: string) => React.CSSProperties;
     style?: React.CSSProperties;
     renderLabel: (id: string) => JSX.Element | null;
@@ -48,8 +48,8 @@ export class ButtonStack extends React.Component<ButtonStackProps, {}> {
                                     width: "100%",
                                     ...this.props.buttonStyle(id),
                                 }}
-                                active={this.props.viewState.selected === id}
-                                onClick={() => this.props.viewState.select(id)}
+                                active={this.props.controller.selection === id}
+                                onClick={() => this.props.controller.setSelection(id)}
                             >
                                 {this.props.renderLabel(id)}
                             </Button>

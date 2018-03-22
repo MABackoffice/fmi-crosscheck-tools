@@ -5,7 +5,7 @@ import { QueryFunction } from "../data";
 import { FMISpinner } from "./spinner";
 import { Filter } from "./filter";
 import { Search } from "./search";
-import { ViewState } from "../state";
+import { StateController, MemoryState } from "../state";
 import { ButtonStack, Justification } from "./stack";
 import { ZoomView } from "./zoom";
 import { truncate, sortStrings } from "../utils";
@@ -29,19 +29,19 @@ export interface SupportMatrixProps {
 
 @observer
 export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}> {
-    private viewState: ViewState;
+    private controller: StateController;
 
     constructor(props: SupportMatrixProps, context: {}) {
         super(props, context);
         // TODO: Use new React 16.3 Context API to create a provider/consumer pair...
-        this.viewState = new ViewState(props.query);
+        this.controller = new MemoryState(props.query);
     }
 
     render() {
         let importStyle = (id: string) => ({ backgroundColor: Colors.FOREST5 });
         let exportStyle = (id: string) => ({ backgroundColor: Colors.FOREST5 });
         let getLabel = (id: string): string => {
-            let tool = this.viewState.results.get().tools.find(summary => summary.id === id);
+            let tool = this.controller.results.get().tools.find(summary => summary.id === id);
             if (!tool) return "Unknown Tool: " + id; // Should not happen
             return truncate(tool.displayName);
         };
@@ -54,23 +54,23 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
             return sortStrings(alabel, blabel);
         };
 
-        let columns = this.viewState.columns;
-        let exportOnly = columns.export_only.filter(this.viewState.matchesTerm);
+        let columns = this.controller.columns;
+        let exportOnly = columns.export_only.filter(this.controller.matchesTerm);
         exportOnly.sort(sortByLabel);
-        let both = columns.both.filter(this.viewState.matchesTerm);
+        let both = columns.both.filter(this.controller.matchesTerm);
         both.sort(sortByLabel);
-        let importOnly = columns.import_only.filter(this.viewState.matchesTerm);
+        let importOnly = columns.import_only.filter(this.controller.matchesTerm);
         importOnly.sort(sortByLabel);
 
         return (
             <div className="Support" style={{ margin: "10px" }}>
                 <div style={{ display: "flex" }}>
-                    <Filter settings={this.viewState} />
-                    <Search settings={this.viewState} />
+                    <Filter settings={this.controller} />
+                    <Search settings={this.controller} />
                 </div>
                 {/* Show spinner if the data hasn't loaded yet */}
-                {this.viewState.loading && FMISpinner}
-                {!this.viewState.loading && (
+                {this.controller.loading && FMISpinner}
+                {!this.controller.loading && (
                     <div>
                         <p>Select a tool to find out more about its FMI capabilities...</p>
                         <div style={{ display: "flex", marginBottom: "30px" }}>
@@ -86,13 +86,13 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
                                         <ButtonStack
                                             ids={exportOnly}
                                             style={stackStyle}
-                                            viewState={this.viewState}
+                                            controller={this.controller}
                                             buttonStyle={exportStyle}
                                             renderLabel={renderLabel}
                                             justification={Justification.Block}
                                         />
                                     )}
-                                    <Unchecked imports={false} viewState={this.viewState} />
+                                    <Unchecked imports={false} controller={this.controller} />
                                 </div>
                                 <div style={colDivStyle}>
                                     <h4>
@@ -105,7 +105,7 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
                                         <ButtonStack
                                             ids={both}
                                             style={stackStyle}
-                                            viewState={this.viewState}
+                                            controller={this.controller}
                                             buttonStyle={importStyle}
                                             renderLabel={renderLabel}
                                             justification={Justification.Block}
@@ -123,17 +123,17 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
                                         <ButtonStack
                                             ids={importOnly}
                                             style={stackStyle}
-                                            viewState={this.viewState}
+                                            controller={this.controller}
                                             buttonStyle={importStyle}
                                             renderLabel={renderLabel}
                                             justification={Justification.Block}
                                         />
                                     )}
-                                    <Unchecked imports={true} viewState={this.viewState} />
+                                    <Unchecked imports={true} controller={this.controller} />
                                 </div>
                             </Columns>
                         </div>
-                        <ZoomView viewState={this.viewState} settings={this.viewState} tools={columns.tools} />
+                        <ZoomView controller={this.controller} tools={columns.tools} />
                         {/* <SupportGraph matrix={this.matrix.get()} /> */}
                     </div>
                 )}

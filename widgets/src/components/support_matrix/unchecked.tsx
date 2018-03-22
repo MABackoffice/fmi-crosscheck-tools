@@ -1,20 +1,14 @@
 import * as React from "react";
-import { ViewState } from "../state";
+import { StateController } from "../state";
 import { observer } from "mobx-react";
 import { Collapse } from "@blueprintjs/core";
 
 export interface UncheckedProps {
     imports: boolean;
-    viewState: ViewState;
+    controller: StateController;
 }
 
-function describe(
-    level: string,
-    intent: string,
-    viewState: ViewState,
-    list: string[],
-    select: (id: string) => void,
-): JSX.Element {
+function describe(level: string, intent: string, list: string[], select: (id: string) => void): JSX.Element {
     return (
         <div style={{ bottom: 0, textAlign: "left", marginBottom: "10px" }}>
             <h5>{level}</h5>
@@ -36,14 +30,14 @@ function describe(
 export class Unchecked extends React.Component<UncheckedProps, {}> {
     render() {
         let support = this.props.imports
-            ? this.props.viewState.uncheckedImporting
-            : this.props.viewState.uncheckedExporting;
+            ? this.props.controller.uncheckedImporting
+            : this.props.controller.uncheckedExporting;
         let select = (id: string) => {
-            this.props.viewState.select(id);
+            this.props.controller.setSelection(id);
         };
         let isOpen =
-            (this.props.viewState.showUnchecked || !!this.props.viewState.search) &&
-            this.props.viewState.platform === undefined;
+            (this.props.controller.unchecked || !!this.props.controller.search) &&
+            this.props.controller.platform === undefined;
         return (
             <div style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
                 <div style={{ flexGrow: 1, marginTop: "20px" }} />
@@ -51,15 +45,13 @@ export class Unchecked extends React.Component<UncheckedProps, {}> {
                     {describe(
                         "Available",
                         "warning",
-                        this.props.viewState,
-                        support.available.filter(this.props.viewState.matchesTerm),
+                        support.available.filter(this.props.controller.matchesTerm),
                         select,
                     )}
                     {describe(
                         "Planning Support",
                         "default",
-                        this.props.viewState,
-                        support.planned.filter(this.props.viewState.matchesTerm),
+                        support.planned.filter(this.props.controller.matchesTerm),
                         select,
                     )}
                 </Collapse>

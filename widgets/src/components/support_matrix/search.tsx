@@ -1,11 +1,9 @@
 import * as React from "react";
 import { observer } from "mobx-react";
+import { SearchController } from "../state";
 
 export interface SearchSettings {
-    settings: {
-        search: string;
-        showUnchecked: boolean;
-    };
+    settings: SearchController;
 }
 
 @observer
@@ -14,7 +12,7 @@ export class Search extends React.Component<SearchSettings, {}> {
         let settings = this.props.settings;
         let updateSearch = (ev: React.ChangeEvent<HTMLInputElement>) => {
             let term = ev.target.value;
-            settings.search = term || "";
+            settings.setSearch(term || "");
         };
         return (
             <div style={{ display: "flex" }}>
@@ -29,8 +27,8 @@ export class Search extends React.Component<SearchSettings, {}> {
                 >
                     <input
                         type="checkbox"
-                        value={settings.showUnchecked ? "true" : "false"}
-                        onChange={() => (settings.showUnchecked = !settings.showUnchecked)}
+                        value={settings.unchecked ? "true" : "false"}
+                        onChange={() => settings.setUnchecked(!settings.unchecked)}
                     />
                     <span className="pt-control-indicator" />
                     Show Planned and Available Support

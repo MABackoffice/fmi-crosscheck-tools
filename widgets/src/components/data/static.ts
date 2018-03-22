@@ -3,7 +3,6 @@ import { QueryFunction, QueryResult } from "./query";
 
 // For production, we use these links
 let toolsURI = "/data/tools.json";
-// const fmusURI = "https://raw.githubusercontent.com/modelica/fmi-standard.org/master/_data/fmus.json";
 let xcURI = "/data/xc_results.json";
 
 if (process.env.NODE_ENV === "development") {
@@ -36,17 +35,13 @@ export function loadData(): QueryFunction {
     let toolsTable = fetchJSON<ToolsTable>(toolsURI);
     let resultsTable = fetchJSON<CrossCheckResult[]>(xcURI);
     // fetch data
-    return async (
-        version: string | undefined,
-        variant: string | undefined,
-        platform: string | undefined,
-    ): Promise<QueryResult> => {
+    return async (version: string | null, variant: string | null, platform: string | null): Promise<QueryResult> => {
         let tools = await toolsTable;
         let results = await resultsTable;
         let matrix = await createMatrixReport(tools, results, {
-            version: version,
-            variant: variant,
-            platform: platform,
+            version: version || undefined,
+            variant: variant || undefined,
+            platform: platform || undefined,
         });
         let ret: QueryResult = {
             formatVersion: "1",
