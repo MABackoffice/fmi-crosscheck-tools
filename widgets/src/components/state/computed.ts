@@ -81,22 +81,22 @@ export class ComputedProperties {
 
     @computed
     get incv1() {
-        return this.state.version === FMIVersion.FMI1 || this.state.version === undefined;
+        return this.state.version === FMIVersion.FMI1 || this.state.version === null;
     }
 
     @computed
     get incv2() {
-        return this.state.version === FMIVersion.FMI2 || this.state.version === undefined;
+        return this.state.version === FMIVersion.FMI2 || this.state.version === null;
     }
 
     @computed
     get inccs() {
-        return this.state.variant === FMIVariant.CS || this.state.variant === undefined;
+        return this.state.variant === FMIVariant.CS || this.state.variant === null;
     }
 
     @computed
     get incme() {
-        return this.state.variant === FMIVariant.ME || this.state.variant === undefined;
+        return this.state.variant === FMIVariant.ME || this.state.variant === null;
     }
 
     /**

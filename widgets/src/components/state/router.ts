@@ -116,6 +116,7 @@ export class RouterState implements StateController {
 
     setUnchecked(flag: boolean) {
         this.unchecked = flag;
+        console.log("Setting unchecked to: ", this.unchecked);
     }
 
     protected handler: History.LocationListener = (loc, act) => {
