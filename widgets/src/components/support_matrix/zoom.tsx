@@ -192,7 +192,6 @@ export class ZoomView extends React.Component<ZoomViewProps, {}> {
                             </Columns>
                         </div>
                     </div>
-                    )
                 </div>
             </Overlay>
         );

@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { SupportMatrixViewer } from "./components";
+import { TwoColumnView } from "./components";
 import { loadData } from "./components/data";
 import "./index.css";
 
 let query = loadData();
 let elementMap = {
-    support: <SupportMatrixViewer query={query} />,
+    support: <TwoColumnView query={query} />,
 };
 
 Object.keys(elementMap).forEach(name => {

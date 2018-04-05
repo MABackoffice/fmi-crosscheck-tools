@@ -12,6 +12,7 @@ import { truncate, sortStrings } from "../utils";
 import { Columns } from "./columns";
 import { Unchecked } from "./unchecked";
 import { Colors } from "@blueprintjs/core";
+import { SupportMatrixProps } from "./support_matrix";
 
 const colDivStyle: React.CSSProperties = {
     height: "100%",
@@ -28,7 +29,7 @@ export interface SupportMatrixProps {
 }
 
 @observer
-export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}> {
+export class TwoColumnView extends React.Component<SupportMatrixProps, {}> {
     private controller: StateController;
     private computed: ComputedProperties;
 
@@ -57,12 +58,11 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
         };
 
         let columns = this.computed.columns;
-        let exportOnly = columns.export_only.filter(this.computed.matchesTerm);
-        exportOnly.sort(sortByLabel);
         let both = columns.both.filter(this.computed.matchesTerm);
-        both.sort(sortByLabel);
-        let importOnly = columns.import_only.filter(this.computed.matchesTerm);
-        importOnly.sort(sortByLabel);
+        let exportSupport = [...columns.export_only.filter(this.computed.matchesTerm), ...both];
+        exportSupport.sort(sortByLabel);
+        let importSupport = [...columns.import_only.filter(this.computed.matchesTerm), ...both];
+        importSupport.sort(sortByLabel);
 
         return (
             <div className="Support" style={{ margin: "10px" }}>
@@ -79,14 +79,14 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
                             <Columns style={{ flexGrow: 1 }}>
                                 <div style={colDivStyle}>
                                     <h4>
-                                        Export only&nbsp;<span className="pt-icon-arrow-right" />
+                                        Support Export&nbsp;<span className="pt-icon-arrow-right" />
                                     </h4>
                                     <h5 style={{ textAlign: "left" }}>Cross-Checked</h5>
-                                    {exportOnly.length === 0 ? (
+                                    {exportSupport.length === 0 ? (
                                         <p>No tools match filter parameters</p>
                                     ) : (
                                         <ButtonStack
-                                            ids={exportOnly}
+                                            ids={exportSupport}
                                             style={stackStyle}
                                             controller={this.controller}
                                             buttonStyle={exportStyle}
@@ -98,32 +98,14 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
                                 </div>
                                 <div style={colDivStyle}>
                                     <h4>
-                                        <span className="pt-icon-arrow-right" />&nbsp;Import and Export&nbsp;<span className="pt-icon-arrow-right" />
+                                        <span className="pt-icon-arrow-right" />&nbsp;Support Import
                                     </h4>
                                     <h5 style={{ textAlign: "left" }}>Cross-Checked</h5>
-                                    {both.length === 0 ? (
+                                    {importSupport.length === 0 ? (
                                         <p>No tools match filter parameters</p>
                                     ) : (
                                         <ButtonStack
-                                            ids={both}
-                                            style={stackStyle}
-                                            controller={this.controller}
-                                            buttonStyle={importStyle}
-                                            renderLabel={renderLabel}
-                                            justification={Justification.Block}
-                                        />
-                                    )}
-                                </div>
-                                <div style={colDivStyle}>
-                                    <h4>
-                                        <span className="pt-icon-arrow-right" />&nbsp;Import only
-                                    </h4>
-                                    <h5 style={{ textAlign: "left" }}>Cross-Checked</h5>
-                                    {importOnly.length === 0 ? (
-                                        <p>No tools match filter parameters</p>
-                                    ) : (
-                                        <ButtonStack
-                                            ids={importOnly}
+                                            ids={importSupport}
                                             style={stackStyle}
                                             controller={this.controller}
                                             buttonStyle={importStyle}
@@ -136,7 +118,6 @@ export class SupportMatrixViewer extends React.Component<SupportMatrixProps, {}>
                             </Columns>
                         </div>
                         <ZoomView controller={this.controller} tools={columns.tools} computed={this.computed} />
-                        {/* <SupportGraph matrix={this.matrix.get()} /> */}
                     </div>
                 )}
             </div>
