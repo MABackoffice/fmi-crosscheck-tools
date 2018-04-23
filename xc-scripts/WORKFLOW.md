@@ -68,7 +68,7 @@ size of this repository made it unmanageably large.
 
 In 2017, it was decided to create a more distributed system for managing this
 data where each vendor would manage the data for their tools in distinct repositories
-separate from other vendors. In this way, each vendor had access and contorl over
+separate from other vendors. In this way, each vendor had access and control over
 only their data and each repository could be of a more manageable size.
 
 Since the system was being "torn up", it was decided to make a few changes in
@@ -221,7 +221,7 @@ sense](https://en.wikipedia.org/wiki/Database_normalization)).
 This effectively means that each tool, FMU or cross-check result is considered
 a single piece of data and that all of these types of data are concatenated
 together into literal or conceptual arrays (depending on whether the data
-is serialized into a file or persisteded in a proper database).
+is serialized into a file or persisted in a proper database).
 
 ## Tool Data
 
@@ -269,7 +269,7 @@ previously, this involves primarily extracting the salient parts of the
 directory path into a data structure.
 
 Cross check data is extracted using the `parseImport` function in much the same
-way he FMU data is extracated.
+way the FMU data is extracted.
 
 ## Validation
 
@@ -398,7 +398,7 @@ loaded and, if so, what values it provides) along with the filter settings. All
 other data we wish to visualize (_e.g.,_ the `MatrixReport`) is **derived** from
 this state information. When the state is updated, _some_ parts of the UI must
 be re-rendered. This can be a potentially difficult to determine owing to the
-compilcated relationship between the state data and the derived data.
+complicated relationship between the state data and the derived data.
 Fortunately, there is a wonderful Javascript package called `mobx` that not only
 allows us to declaratively model the transformation of state data into derived
 data but also can (by leveraging the packages `react` and `mobx-react`)
@@ -430,7 +430,7 @@ web site.
 # Source Code
 
 The source code associated with this project is distributed across several
-NPM packages. The follow describes each package:
+NPM packages. The following describes each package:
 
 * `@modelica/fmi-data` - Primarily type definitions for different forms of
   raw and processed data.
