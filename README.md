@@ -108,5 +108,5 @@ repositories (thus triggering a re-build).
 
 The build server installs the latest published version of the
 `@modelica/fmi-xc-scripts` package (contained in the `xc-scripts` directory) to
-process the vendor data. The [`README`](./xc-scripts/READM.md) file contains
+process the vendor data. The [`README`](./xc-scripts/README.md) file contains
 details on how to use the scripts.
