@@ -16,7 +16,7 @@ that your company is called 'acme'. You would then create a file named
 `acme.vendor` in the root directory of your vendor repository. Such a file
 should be filled in as follows:
 
-```toml
+```
 vendorId=acme
 displayName=ACME Modeling and Simulation
 href=https://acme-modeling.org
@@ -38,7 +38,7 @@ you should create a file with a `.tool` suffix. Let's assume we have a tool
 called AcmeSim. Then we would create a file named `AcmeSim.tool` that looked
 like this:
 
-```toml
+```
 displayName=ACME Simulator
 homepage=https://acme-modeling.org/acme-simulator
 note=AcmeSim is far and away the least used FMI simulation tool on the planet
