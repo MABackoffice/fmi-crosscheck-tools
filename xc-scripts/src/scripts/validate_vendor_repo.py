@@ -181,8 +181,6 @@ if __name__ == '__main__':
         if len(t) - len(s) != 9:
             continue
 
-        print(subdir)
-
         xc_type, fmi_version, fmi_type, platform = t[-9:-5]
 
         if fmi_version not in ['FMI_1.0', 'FMI_2.0']:
@@ -203,8 +201,6 @@ if __name__ == '__main__':
 
         if len(t) - len(s) != 7:
             continue
-
-        print(subdir)
 
         fmi_version, fmi_type, platform = t[-6:-3]
 
