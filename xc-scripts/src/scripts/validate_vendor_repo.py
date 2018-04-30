@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import os
 import numpy as np
@@ -164,10 +166,25 @@ def segments(path):
 
 if __name__ == '__main__':
 
+    import argparse
+    import textwrap
+
+    description = """\
+    Validate cross-check results and test FMUs in vendor repositories 
+    """
+
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description=textwrap.dedent(description))
+
+    parser.add_argument('repo_path', nargs='?', help="path to the vendor repository")
+    parser.add_argument('--json', help="JSON file to save the problems")
+
+    args = parser.parse_args()
+
     problems = []
 
-    if len(sys.argv) == 2:
-        vendor_dir = sys.argv[1]
+    if args.repo_path:
+        vendor_dir = args.repo_path
     else:
         vendor_dir = os.getcwd()
 
@@ -224,6 +241,11 @@ if __name__ == '__main__':
     for problem in problems:
         print()
         print(problem)
+
+    if args.json:
+        import json
+        with open(args.json, 'w') as outfile:
+            json.dump(problems, outfile, indent=2)
 
     if problems:
         sys.exit(1)
