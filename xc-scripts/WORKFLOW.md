@@ -111,7 +111,7 @@ the text that should be placed there by the vendor.
 ```ini
 vendorId=<Unique Vendor ID...Provided by the Modelica Association>
 displayName=<Vendor name as it should be displayed on web site>
-href=<URL to vendor web site>
+homepage=<URL to vendor web site>
 email=<Email address for vendor contact>
 repo=<GitHub repository where this file is hosted>
 
