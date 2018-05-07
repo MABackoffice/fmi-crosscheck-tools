@@ -5,6 +5,8 @@
     "scripts": {
         "prepublish": "tsc",
         "compile": "tsc",
+        "build":
+            "npm run compile && pkg lib/scripts/process_repo.js --targets node8-win-x64,node8-linux-x64,node8-macos-x64 --out-path ./bin",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "bin": {

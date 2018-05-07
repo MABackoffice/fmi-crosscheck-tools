@@ -1,4 +1,5 @@
 node_modules
+bin
 sample_output
 lib
 yarn-error.log
