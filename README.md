@@ -1,5 +1,20 @@
 # `fmi-crosscheck-tools`
 
+## Guides
+
+If you are a vendor and you want to know how to get your tools added to the
+cross-check results, read the [New Vendor Guide](./NEW-VENDOR.md).
+
+If you've read the New Vendor Guide and now need to know how to start populating
+your repository with information about your tool, read the [Getting Started
+Guide](./GETTING-STARTED.md).
+
+Finally, if you would like to know more about how the cross-check data is
+compiled (ideally with the goal of contributing improvments to the current
+tools), you should read the [Workflow Guide](./WORKFLOW.md).
+
+## Structure
+
 This repository is a
 [monorepo](https://medium.com/@maoberlehner/monorepos-in-the-wild-33c6eb246cb9).
 It contains a number of different packages related to processing FMI cross-check
@@ -15,28 +30,28 @@ would be a good practice to follow for a large scale system, these tools are
 small enough and inherently integrated to the point where keeping them together
 makes more sense.
 
-## `data-types`
+### `data-types`
 
 The [`data-types` directory](data-types/README.md) contains a collection of
 common TypeScript type definitions that are shared by some of the other packages
 stored in this repository. These definitions are published as the `npm`
 package `@modelica/fmi-data`.
 
-## `widgets`
+### `widgets`
 
 The [`widgets` directory](widgets/README.md) contains a collection of
 `react` components that are used to create an interactive experience when
 browsing the FMI compliant tools described on the FMI web site. These
 components are published as the `npm` package `@modelica/fmi-widgets`.
 
-## `xc-scripts`
+### `xc-scripts`
 
 The [`xc-scripts` directory](xc-scripts/README.md) contains a collection of
 scripts that read vendor supplied compliance data and process it into summary
 compliance data to be rendered by the components in the `widgets` directory.
 These scripts are publish as the `npm` package `@modelica/fmi-xc-scripts`.
 
-## `build-server`
+### `build-server`
 
 The [`build-server` directory](build-server/README.md) contains a collection of
 _shell_ scripts that pull together code from all the various other packages in
@@ -48,13 +63,13 @@ published as an `npm` package but is instead use to (automatically) build a
 [Docker](https://www.docker.com/) image for a container capable of running this
 workflow (either in a one-off mode or as a receiver of webhooks from GitHub).
 
-# Deep Dive
+## Deep Dive
 
 Ultimately, all of what is contained in this repository is used to create a
 build server that generates [the FMI web site](http://fmi-standard.org). Here
 we will provide a bit more detail on how all the pieces fit together and run.
 
-## What does the build server do?
+### What does the build server do?
 
 The build server operates in two phases. The first is a setup phase that
 happens exactly once when the build server starts up. In this phase, the most
@@ -76,12 +91,12 @@ site (stored in the `_site` directory). Finally, the generated files are pushed
 to the CDN (currently `netlify`) which has the effect of updating the website at
 `http://fmi-standard.org`.
 
-## Can I use the Docker image to run the build locally?
+### Can I use the Docker image to run the build locally?
 
 > TODO: Fill this out, but figure out some way to utilize a local repo for the
 > vendor data.
 
-## How the build server image is created?
+### How the build server image is created?
 
 The Docker image of the build server is described by the
 [`Dockerfile`](./build-server/Dockerfile) located in the `build-server`
@@ -90,7 +105,7 @@ repository is changed. The Docker image can be found on the web
 [here](https://hub.docker.com/r/modelica/fmi-build-server/). The actual image
 can be pulled down with the command `docker pull modelica/fmi-build-server`.
 
-## Where is the build server running?
+### Where is the build server running?
 
 At the moment, the container running the image is hosted on [Digital
 Ocean](http://digitalocean.com). But it is trivial to fire the server up on any
@@ -104,7 +119,7 @@ to the IP address of the build server because all the vendor GitHub repositories
 `http://build.fmi-standard.orghooks/fmi-build` when changes are pushed to those
 repositories (thus triggering a re-build).
 
-## How are the vendor repositories processed?
+### How are the vendor repositories processed?
 
 The build server installs the latest published version of the
 `@modelica/fmi-xc-scripts` package (contained in the `xc-scripts` directory) to

@@ -17,7 +17,7 @@ Vendor ID:
 GitHub User Names:
 ```
 
-Note that the `Vendor Name` is how your company or organizations name will
+Note that the `Vendor Name` is how your company or organization's name will
 appear on the FMI web site. The `Vendor ID` should be a unique identifier
 (only letters and numbers, no spaces or special characters) that isn't already
 claimed by another vendor (see here for [a list of claimed vendor
