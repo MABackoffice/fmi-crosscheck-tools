@@ -3,5 +3,5 @@ export interface VendorDetails {
     displayName: string;
     href: string | null;
     email: string | null;
-    repo: string;
+    // repo: string;
 }

@@ -31,7 +31,6 @@ export function loadVendorData(dir: string): VendorDetails {
         displayName: readProp(obj, "displayName"),
         href: readProp(obj, "href", null),
         email: readProp(obj, "email", null),
-        repo: readProp(obj, "repo"),
     };
 }
 
@@ -51,6 +50,5 @@ export function createVendorDataFromLegacyToolFile(root: string, file: string): 
         displayName: vendor,
         href: obj.Tool.href || null,
         email: obj.Tool.email || null,
-        repo: repo,
     };
 }
